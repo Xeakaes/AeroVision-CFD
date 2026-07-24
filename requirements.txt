@@ -1,0 +1,8 @@
+numpy>=1.24
+scipy>=1.10
+PyQt6>=6.4
+pyvista>=0.40
+pyvistaqt>=0.11
+python-numpy-stl>=3.0
+matplotlib>=3.7
+cupy>=12.0  # opsiyonel - GPU destegi icin
