@@ -2,6 +2,17 @@
 
 Professional CFD (Computational Fluid Dynamics) simulation interface with turbulence modeling and 3D visualization.
 
+## Solver at a Glance
+
+**Incompressible Navier-Stokes — collocated Finite Volume Method (FVM)** on a voxelized Cartesian grid. Not LBM, not FEM.
+
+- **Projection method**: Chorin fractional-step (pressure Poisson solved every step, device-resident CG on GPU)
+- **Pressure-velocity coupling**: Rhie-Chow interpolation on a collocated grid
+- **Advection**: Bounded QUICK scheme with Van Leer limiter (3rd order)
+- **Diffusion**: Conservative viscous fluxes, div(ν_eff · grad u)
+- **Time integration**: RK2 (Heun) with CFL-adaptive time stepping
+- **Turbulence**: Spalart-Allmaras (GPU kernels), k-epsilon, k-omega SST, Smagorinsky (CPU)
+
 ## Features
 
 - **Physics Engine**: Navier-Stokes solver with multiple turbulence models
@@ -179,6 +190,19 @@ limits (1-2 cell thickness) — see the "Limitations" section of the report.
 - F1/F2 blending functions
 - Cross-diffusion term
 
+## Validation & Benchmarks
+
+Classic benchmark cases used to verify the solver against literature references:
+
+- **Flow past a sphere**: Cd = **0.449** at Re = 4e5 (Schiller-Naumann reference 0.47, **4.4% error**) — SA model, 60×30×30 grid
+- **NACA 0012 airfoil**: lift coefficient vs AoA (Cl = 0.90 @ 8° reference) — reported as qualitative on coarse voxel grids (see report "Limitations")
+- **GPU/CPU parity**: |dCd| = **0.0000** on every platform (bitwise-identical results)
+- Full report: `validation/results/report.md` — regenerate with `python validation/report.py`
+
+Solver verification philosophy: same case run on GPU and CPU must produce
+identical force coefficients; published drag/lift data must be matched
+within a few percent. See the Validation section under Usage for commands.
+
 ## GPU Acceleration
 
 The OpenCL path (Intel/AMD GPUs) runs the following on-device kernels (fp64):
@@ -322,6 +346,20 @@ GPL-3.0 — see [LICENSE](LICENSE).
 ---
 
 # Türkçe
+
+## Çözücü Özeti
+
+**Sıkıştırılamaz Navier-Stokes — kolokasyonlu Sonlu Hacimler Yöntemi (FVM)**
+voxelize kartezyen ağ üzerinde. LBM değil, FEM değil.
+
+- **Projeksiyon yöntemi**: Chorin fractional-step (basınç Poisson her adımda
+  çözülür; GPU'da cihaz-yerleşik CG)
+- **Basınç-hız eşleşmesi**: Kolokasyonlu ağda Rhie-Chow interpolasyonu
+- **Taşınım**: Van Leer sınırlayıcılı bounded QUICK şeması (3. derece)
+- **Difüzyon**: Konservatif viskoz flux'lar, div(ν_eff · grad u)
+- **Zaman integrasyonu**: CFL uyarlanır adımlı RK2 (Heun)
+- **Türbülans**: Spalart-Allmaras (GPU kernel'leri), k-epsilon, k-omega SST,
+  Smagorinsky (CPU)
 
 ## Kurulum
 
@@ -467,6 +505,23 @@ niteliksel doğrulama olarak raporlanmıştır (raporun "Sınırlamalar" bölüm
 - Shear Stress Transport formülasyonu
 - F1/F2 karışım fonksiyonları
 - Çapraz difüzyon terimi
+
+## Doğrulama ve Kıyaslamalar
+
+Çözücüyü literatür referanslarına karşı doğrulayan klasik benchmark vakaları:
+
+- **Küre etrafında akış**: Cd = **0.449**, Re = 4e5 (Schiller-Naumann
+  referansı 0.47, **%4.4 hata**) — SA modeli, 60×30×30 ağ
+- **NACA 0012 kanat profili**: Hücum açısına göre kaldırma katsayısı
+  (Cl = 0.90 @ 8° referansı) — kaba voxel ağlarda niteliksel olarak raporlanır
+  (raporun "Sınırlamalar" bölümü)
+- **GPU/CPU paritesi**: Her platformda |dCd| = **0.0000** (birebir aynı sonuç)
+- Tam rapor: `validation/results/report.md` — `python validation/report.py` ile yeniden üretilir
+
+Doğrulama felsefesi: aynı vaka GPU ve CPU'da çalıştırıldığında kuvvet
+katsayıları birebir aynı çıkmalı; yayınlanmış sürüklenme/kaldırma verileri
+birkaç yüzde içinde tutturulmalı. Komutlar için Kullanım bölümündeki
+Doğrulama kısmına bakın.
 
 ## GPU Hızlandırma
 
