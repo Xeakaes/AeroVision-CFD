@@ -1,0 +1,49 @@
+name: Build Windows Packages
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build-onedir:
+    name: Onedir (Inno source)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy scipy PyQt6 pyvista pyvistaqt numpy-stl matplotlib mako pyopencl pyinstaller
+          pip install cupy-cuda12x
+      - name: Build onedir
+        run: python -m PyInstaller build.spec --clean --noconfirm
+      - name: Zip onedir
+        run: Compress-Archive -Path dist/AeroVision_CFD -DestinationPath dist/AeroVision_CFD.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AeroVision_CFD_onedir
+          path: dist/AeroVision_CFD.zip
+
+  build-onefile:
+    name: Onefile (portable exe)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy scipy PyQt6 pyvista pyvistaqt numpy-stl matplotlib mako pyopencl pyinstaller
+          pip install cupy-cuda12x
+      - name: Build onefile
+        run: python -m PyInstaller build_onefile.spec --clean --noconfirm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AeroVision_CFD_Single
+          path: dist/AeroVision_CFD_Single.exe
