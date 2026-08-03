@@ -1,5 +1,5 @@
 """
-AeroVision CFD v1.0 - Physics Engine Core
+AeroVision CFD v1.1 - Physics Engine Core
 
 Features:
   - Mask:     Laser scan voxelization with cKDTree + sub-sample boundary detection

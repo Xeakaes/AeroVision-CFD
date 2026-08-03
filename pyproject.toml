@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aerovision-cfd"
-version = "1.0.0"
+version = "1.1.0"
 description = "AeroVision CFD - STL tabanli acik kaynak ruzgar tuneli simulatoru"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,5 +1,5 @@
 """
-AeroVision CFD v1.0 - Crash Logger
+AeroVision CFD v1.1 - Crash Logger
 Standalone error capture module for application stability.
 """
 

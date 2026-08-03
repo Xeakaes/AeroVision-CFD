@@ -1,4 +1,4 @@
-# AeroVision CFD v1.0
+# AeroVision CFD v1.1
 
 Professional CFD (Computational Fluid Dynamics) simulation interface with turbulence modeling and 3D visualization.
 
@@ -200,10 +200,12 @@ python -m PyInstaller build_onefile.spec --clean
 ```
 
 ### Setup Installer (Inno Setup)
-1. `dist/AeroVision_CFD/` onedir paketini temel al.
-2. Inno Setup'da bir `.iss` betigi yazin (ApplicationName: AeroVision CFD,
-   Source: dist/AeroVision_CFD\*, OutputBaseFilename: AeroVision_CFD_Setup).
-3. Derleyin — `AeroVision_CFD_Setup.exe` release olarak yayinlanir.
+1. `python -m PyInstaller build.spec --clean` ile `dist/AeroVision_CFD/` onedir paketini uret.
+2. Inno Setup Compiler ile hazir betigi derle: `AeroVision_CFD_Setup.iss` (Source:
+   `dist/AeroVision_CFD\*`, OutputBaseFilename: `AeroVision_CFD_Setup`, 64-bit + Turkiye
+   dili dahil). Setup Compiler > Build.
+3. Cikti `dist/AeroVision_CFD_Setup.exe` — release olarak yayinlanir. Versiyon
+   (`MyAppVersion`) pyproject.toml ile ayni tutulmali.
 
 ### Output
 - `dist/AeroVision_CFD/` - Folder distribution (onedir, Inno Setup kaynagi)

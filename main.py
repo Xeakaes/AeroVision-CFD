@@ -404,7 +404,7 @@ class CFDWorker(QThread):
 class AeroVisionWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("AeroVision CFD v1.0")
+        self.setWindowTitle("AeroVision CFD v1.1")
         self.resize(1500, 900)
         self.verts_base = None
         self.i_idx = self.j_idx = self.k_idx = None
@@ -636,8 +636,8 @@ class AeroVisionWindow(QMainWindow):
         """Hakkinda penceresi."""
         QMessageBox.about(
             self,
-            "AeroVision CFD v1.0",
-            "AeroVision CFD v1.0\n\n"
+            "AeroVision CFD v1.1",
+            "AeroVision CFD v1.1\n\n"
             "Professional CFD Simulation Interface\n"
             "with Turbulence Modeling and 3D Visualization\n\n"
             "Features:\n"
@@ -702,7 +702,7 @@ class AeroVisionWindow(QMainWindow):
         gpu_info = (
             f"GPU: {GPU_DEVICE_NAME}" if GPU_DEVICE_NAME and GPU_DEVICE_NAME != "Yok" else "GPU: Yok (CPU)"
         )
-        self.status_bar.showMessage(f"Hazir. {gpu_info} | v1.0")
+        self.status_bar.showMessage(f"Hazir. {gpu_info} | v1.1")
 
         # İlerleme çubuğu percentage mode
         self.w["progress_bar"].setRange(0, 100)
