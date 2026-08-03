@@ -260,12 +260,11 @@ python -m PyInstaller build_onefile.spec --clean
 ### Setup Installer (Inno Setup)
 1. Build the onedir package: `python -m PyInstaller build.spec --clean` (or
    download it from the GitHub Actions artifacts — see below).
-2. Compile the ready-made script `AeroVision_CFD_Setup.iss` with Inno Setup
-   Compiler (Source: `dist/AeroVision_CFD\*`, OutputBaseFilename:
-   `AeroVision_CFD_Setup`, 64-bit, English + Turkish languages). Setup
-   Compiler > Build.
+2. Write an `.iss` script with Inno Setup Compiler (Source:
+   `dist/AeroVision_CFD\*`, OutputBaseFilename: `AeroVision_CFD_Setup`,
+   64-bit, English + Turkish languages). Setup Compiler > Build.
 3. The output `dist/AeroVision_CFD_Setup.exe` is the release installer.
-   Keep `MyAppVersion` in sync with pyproject.toml.
+   Keep the version in sync with pyproject.toml.
 
 ### Automated Windows Builds (GitHub Actions)
 
@@ -278,7 +277,7 @@ Instead of building locally, use the provided workflow
 2. Download the artifacts from the finished run:
    - `AeroVision_CFD_onedir.zip` — folder distribution (Inno Setup source)
    - `AeroVision_CFD_Single.exe` — portable single-file build
-3. Unzip the onedir artifact, point `AeroVision_CFD_Setup.iss` at it, and
+3. Unzip the onedir artifact, point your Inno Setup `.iss` script at it, and
    build the installer with Inno Setup.
 
 ### Output
@@ -580,11 +579,11 @@ python -m PyInstaller build_onefile.spec --clean
 ### Kurulumcu (Inno Setup)
 1. Onedir paketini derle: `python -m PyInstaller build.spec --clean` (veya
    aşağıdaki GitHub Actions artifact'lerinden indir).
-2. Hazır betik `AeroVision_CFD_Setup.iss`'i Inno Setup Compiler ile derle
+2. Inno Setup Compiler ile bir `.iss` betiği yaz ve derle
    (Source: `dist/AeroVision_CFD\*`, OutputBaseFilename: `AeroVision_CFD_Setup`,
    64-bit, İngilizce + Türkçe dilleri). Setup Compiler > Build.
 3. Çıktı `dist/AeroVision_CFD_Setup.exe` — release kurulumcusudur.
-   `MyAppVersion`'ı pyproject.toml ile aynı tutun.
+   Versiyonu pyproject.toml ile aynı tutun.
 
 ### Otomatik Windows Derlemeleri (GitHub Actions)
 
@@ -597,7 +596,7 @@ workflow'unu kullanın:
 2. Biten run'dan artifact'leri indirin:
    - `AeroVision_CFD_onedir.zip` — klasör dağıtımı (Inno Setup kaynağı)
    - `AeroVision_CFD_Single.exe` — taşınabilir tek dosya
-3. Onedir artifact'ini açın, `AeroVision_CFD_Setup.iss`'i ona yönlendirin ve
+3. Onedir artifact'ini açın, Inno Setup `.iss` betiğinizi ona yönlendirin ve
    Inno Setup ile kurulumcuyu derleyin.
 
 ### Çıktılar
