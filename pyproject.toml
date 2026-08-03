@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aerovision-cfd"
+version = "1.0.0"
+description = "AeroVision CFD - STL tabanli acik kaynak ruzgar tuneli simulatoru"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0" }
+authors = [{ name = "AeroVision" }]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "PyQt6>=6.4",
+    "pyvista>=0.40",
+    "pyvistaqt>=0.11",
+    "numpy-stl>=3.0",
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+gpu-nvidia = ["cupy>=12.0"]
+gpu-opencl = ["pyopencl>=2023.1", "mako>=1.2"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+aerovision-cfd = "main:main"
+
+[tool.setuptools]
+py-modules = [
+    "main",
+    "solver",
+    "gpu_backend",
+    "constants",
+    "turbulence_models",
+    "ui_components",
+    "postprocess_ui",
+    "cl_backend",
+    "cl_solver",
+    "crash_logger",
+    "sweep",
+]
+
+[tool.setuptools.packages.find]
+include = ["validation*"]
+
+[tool.pytest.ini_options]
+testpaths = ["test_solver.py"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-q"
+markers = [
+    "validation: tam dogrulama benchmark'lari (yavas; -m validation ile)",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+ignore = ["E501", "E701", "E702", "E402"]

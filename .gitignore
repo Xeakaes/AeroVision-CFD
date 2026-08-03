@@ -1,0 +1,40 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.so
+
+# ── Test / lint onbellekleri ──────────────────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Yerel gelistirme / kisisel dosyalar ───────────────────────────────────
+.opencode/
+.aerovision_cfd_config.json
+.recent_files.json
+
+# ── Calisma zamani ciktilari ──────────────────────────────────────────────
+cfd_error_report.log
+cfd_output_results.vtk
+gpu_selftest_result.json
+.selftest_sphere.stl
+benchmarks/
+results/
+*.log
+
+# ── Buyuk model / paket dosyalari (repo disinda tutulur) ─────────────────
+*.stl
+*.deb
+
+# ── Build ciktisi (PyInstaller) ──────────────────────────────────────────
+dist/
+build/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
