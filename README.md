@@ -195,8 +195,23 @@ numerical scheme.
 GPU/CPU parity is verified on every session by `gpu_selftest.py`
 (|dCd| = 0.0000, bitwise-identical to the CPU reference).
 
-Measured on an AMD Ellesmere (Polaris) GPU: **3.52x** speedup over CPU,
-with exact result parity. See `gpu_profiler.py` for per-kernel timings.
+## Performance
+
+Real benchmark results from `gpu_selftest.py` (sphere R = 0.25 m,
+40×20×20 grid, 30 iterations, Spalart-Allmaras, wind 10 m/s) — GPU/CPU
+parity |dCd| = 0.0000 on every system:
+
+| Hardware | Backend | Time (30 iters) | Speedup |
+|---|---|---|---|
+| i5-3470 + RX 570 OC | CPU (reference) | 5.18 s | 1.0x |
+| i5-3470 + RX 570 OC | GPU (OpenCL, fp64) | 1.47 s | **3.52x** |
+| i7-13620H + RTX 4060 Laptop | CPU (reference) | 1.64 s | 1.0x |
+| i7-13620H + RTX 4060 Laptop | GPU (cupy, fp64) | 1.38 s | **1.19x** |
+
+The AMD desktop system shows a large 3.52x speedup. The laptop's strong
+CPU (i7-13620H) narrows the gap on the small selftest grid — expect larger
+GPU gains at higher resolutions. See `gpu_profiler.py` for per-kernel
+timings on any system.
 
 ## Building from Source
 
@@ -469,8 +484,23 @@ cupy kullanır.
 GPU/CPU paritesi her oturumda `gpu_selftest.py` ile doğrulanır
 (|dCd| = 0.0000, CPU referansıyla birebir).
 
-AMD Ellesmere (Polaris) GPU'da ölçülen: CPU'ya göre **3.52x** hızlanma,
-birebir sonuç paritesi. Kernel bazlı süreler için `gpu_profiler.py`'a bakın.
+## Performans
+
+`gpu_selftest.py`'den gerçek benchmark sonuçları (küre R = 0.25 m,
+40×20×20 ağ, 30 iterasyon, Spalart-Allmaras, 10 m/s rüzgar) — her sistemde
+GPU/CPU paritesi |dCd| = 0.0000:
+
+| Donanım | Backend | Süre (30 iter) | Hızlanma |
+|---|---|---|---|
+| i5-3470 + RX 570 OC | CPU (referans) | 5.18 s | 1.0x |
+| i5-3470 + RX 570 OC | GPU (OpenCL, fp64) | 1.47 s | **3.52x** |
+| i7-13620H + RTX 4060 Laptop | CPU (referans) | 1.64 s | 1.0x |
+| i7-13620H + RTX 4060 Laptop | GPU (cupy, fp64) | 1.38 s | **1.19x** |
+
+AMD masaüstü sisteminde büyük 3.52x hızlanma görülür. Laptop'un güçlü
+CPU'su (i7-13620H) küçük selftest ağında farkı daraltır — daha yüksek
+çözünürlüklerde GPU kazancının büyümesi beklenir. Her sistemde kernel bazlı
+süreler için `gpu_profiler.py`'a bakın.
 
 ## Derleme
 
