@@ -34,6 +34,7 @@ def parse_res(s):
 
 def load_stl_case(nx, ny, nz):
     """Gercek STL kullanir; yoksa kure uretir."""
+    from solver import create_voxel_mask
     from validation.sphere_stl import sphere_stl, write_binary_stl
 
     stl = None
@@ -42,7 +43,6 @@ def load_stl_case(nx, ny, nz):
             stl = os.path.join(HERE, name)
             break
     if stl is not None and os.path.getsize(stl) > 0:
-        from solver import create_voxel_mask
         from sweep import read_stl
 
         verts, i_idx, j_idx, k_idx = read_stl(stl)
