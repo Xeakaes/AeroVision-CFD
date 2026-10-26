@@ -3,7 +3,7 @@ name: Build Windows Packages
 on:
   workflow_dispatch:
   push:
-    tags: ["v*"]
+    tags: ["v*", "*.*.*"]
 
 jobs:
   build-onedir:
@@ -47,3 +47,21 @@ jobs:
         with:
           name: AeroVision_CFD_Single
           path: dist/AeroVision_CFD_Single.exe
+
+  release:
+    name: Create GitHub Release
+    needs: [build-onedir, build-onefile]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            artifacts/AeroVision_CFD_onedir/AeroVision_CFD_onedir.zip
+            artifacts/AeroVision_CFD_Single/AeroVision_CFD_Single.exe
