@@ -178,12 +178,6 @@ def solve_potential_flow(
     if solid_fraction is not None:
         solid_fraction = xp.asarray(solid_fraction)
         mask_g = xp.logical_or(mask_g, solid_fraction >= 1.0)
-        volume_weight = xp.clip(1.0 - solid_fraction, 0.0, 1.0)
-    else:
-        volume_weight = xp.ones_like(mask_g, dtype=xp.float64)
-
-    phi[mask_g] = 0.0
-    fluid = ~mask_g
 
     for _ in range(max_iter):
         phi_old = phi.copy()
@@ -195,17 +189,10 @@ def solve_potential_flow(
             + phi[1:-1, 1:-1, 2:]
             + phi[1:-1, 1:-1, :-2]
         )
-        phi_update = interior / 6.0
-        if solid_fraction is not None:
-            weight = volume_weight[1:-1, 1:-1, 1:-1]
-            phi[1:-1, 1:-1, 1:-1] = xp.where(
-                fluid[1:-1, 1:-1, 1:-1],
-                phi_update,
-                phi_update * weight + phi_old[1:-1, 1:-1, 1:-1] * (1.0 - weight),
-            )
-        else:
-            phi[1:-1, 1:-1, 1:-1] = xp.where(fluid[1:-1, 1:-1, 1:-1], phi_update, phi_old[1:-1, 1:-1, 1:-1])
-        phi[mask_g] = 0.0
+        # Katı hucreler de Jacobi relax (Neumann BC dphi/dn=0): phi tum
+        # hucrelerde Laplace ile duzlestirilir; duvar yuzeyinde gradyan
+        # boylece sifirlanir (girdi akiskanla sureklilik korunur).
+        phi[1:-1, 1:-1, 1:-1] = interior / 6.0
         phi[0, :, :] = v_wind * (-tx / 2)
         phi[-1, :, :] = phi[-2, :, :]
         phi[:, 0, :] = phi[:, 1, :]
