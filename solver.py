@@ -15,7 +15,7 @@ import os
 
 import numpy as np
 import scipy.spatial as spatial
-from scipy.ndimage import binary_fill_holes, distance_transform_edt
+from scipy.ndimage import binary_closing, binary_fill_holes, distance_transform_edt
 from scipy.sparse import diags as sp_diags
 from scipy.sparse import csr_matrix as sp_csr
 from scipy.sparse.linalg import cg as scipy_cg
@@ -178,21 +178,41 @@ def solve_potential_flow(
     if solid_fraction is not None:
         solid_fraction = xp.asarray(solid_fraction)
         mask_g = xp.logical_or(mask_g, solid_fraction >= 1.0)
+    # Voxelization kabuk bicimindedir ve kabuk deliklidir; plain
+    # binary_fill_holes govde ici doldurmaz. Artan closing delikleri
+    # kapatir; en buyuk dolgu govde ici en iyi kapsar. Neumann duvarinin
+    # ic akiskanla karisimasi akisin govdenin icinden sizmasina yol
+    # acar (govde seffaf olur, issue #2).
+    _shell = np.asarray(mask_g)
+    _st = np.ones((3, 3, 3), dtype=bool)
+    _best = _shell
+    _best_n = int(_shell.sum())
+    for _k in range(2, 14, 2):
+        _c = binary_fill_holes(binary_closing(_shell, structure=_st, iterations=_k))
+        _n = int(_c.sum())
+        if _n > _best_n:
+            _best_n = _n
+            _best = _c
+    solid_full = xp.asarray(_best)
+    fluid = ~solid_full
 
     for _ in range(max_iter):
         phi_old = phi.copy()
-        interior = (
-            phi[2:, 1:-1, 1:-1]
-            + phi[:-2, 1:-1, 1:-1]
-            + phi[1:-1, 2:, 1:-1]
-            + phi[1:-1, :-2, 1:-1]
-            + phi[1:-1, 1:-1, 2:]
-            + phi[1:-1, 1:-1, :-2]
+        c = phi[1:-1, 1:-1, 1:-1]
+        # Neumann BC dphi/dn=0: katı komşular yerine merkez degeri
+        # (yansima) — sadece akiskan komsular ortalamaya girer, katı
+        # hucreler gecirimsiz duvar olur.
+        num = (
+            xp.where(fluid[2:, 1:-1, 1:-1], phi[2:, 1:-1, 1:-1], c)
+            + xp.where(fluid[:-2, 1:-1, 1:-1], phi[:-2, 1:-1, 1:-1], c)
+            + xp.where(fluid[1:-1, 2:, 1:-1], phi[1:-1, 2:, 1:-1], c)
+            + xp.where(fluid[1:-1, :-2, 1:-1], phi[1:-1, :-2, 1:-1], c)
+            + xp.where(fluid[1:-1, 1:-1, 2:], phi[1:-1, 1:-1, 2:], c)
+            + xp.where(fluid[1:-1, 1:-1, :-2], phi[1:-1, 1:-1, :-2], c)
         )
-        # Katı hucreler de Jacobi relax (Neumann BC dphi/dn=0): phi tum
-        # hucrelerde Laplace ile duzlestirilir; duvar yuzeyinde gradyan
-        # boylece sifirlanir (girdi akiskanla sureklilik korunur).
-        phi[1:-1, 1:-1, 1:-1] = interior / 6.0
+        # Katı hucreler dondurulur (guncellenmez): yayilim perturbasyonu
+        # govde icine cekilmesin, Neumann duvar etkisi korunsun.
+        phi[1:-1, 1:-1, 1:-1] = xp.where(fluid[1:-1, 1:-1, 1:-1], num / 6.0, phi_old[1:-1, 1:-1, 1:-1])
         phi[0, :, :] = v_wind * (-tx / 2)
         phi[-1, :, :] = phi[-2, :, :]
         phi[:, 0, :] = phi[:, 1, :]
